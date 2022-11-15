@@ -1,117 +1,181 @@
-class Principal {// despues lo ordeno ;-;
+class Juego {
+  //otros
+  int pantalla, puntos, IndT;
+  long TI;
+  PFont T, C;
+  color azul;
+  //medidas
+  float [] PX = new float [3];
+  float [] PY = new float [3];
+  float [] TM = new float [4];
   //objetos
-  Enemigo [] ene = new Enemigo[5];
-  Textos [] txt = new Textos[5];
-  Boton [] BO = new Boton [5];
-  //propiedades
-  int estado, ancho, alto, ancho2, alto2, Min, Seg;
-  int [] X = new int [5]; 
-  int [] Y = new int [5];
-  int [] TxM = new int [5];
-  float x, y, tam;
-  PFont FC, FT;
-  PImage si;
-
-  Principal() {
-    //asignación
-    estado = 0; //cambio de pantallas hasta que encuentre una mejor forma
-    X[0] =  width/2;                Y[0] = height/2;
-    X[1] = width/9;                 Y[1] = height/11;
-    X[2] = width;                   Y[2] = height;
-    X[3] = 0;                       Y[3] = 0;
-    x = width/2;
-    y = height/2;
-    tam = height/ 8;
-    ancho = width/4;                alto = height/8;
-    TxM[0] = height/15;  TxM[1] = height/25;  TxM[2] = height/9;  TxM[3]= height/30; //tamaños de texto
-    //cargas
-    FC = loadFont("comun.vlw");      //fuentes tipograficas
-    FT = createFont("titulo.ttf", TxM[2]);
-    si = loadImage("cat.jpg");
-    BO[0] = new Boton(FC, TxM[0]);   //(botones)fuente comun, tamaño grande
-    BO[1] = new Boton(FC, TxM[1]);   //(botones)fuente comun, tamaño pequeño
-    for(int i = 0; i<ene.length; i++){
-    ene[i] = new Enemigo(x, y, tam);}
-
-    //haria un for para esto pero me di cuenta de que la fuente cambia..
-    txt [0] = new Textos(FT, TxM[2]);//letra principal, tamaño grande
-    txt [1] = new Textos(FC, TxM[1]);//letra comun, tamaño grande
-    txt [2] = new Textos(FT, TxM[0]);//letra principal, tamaño pequeño
-    txt [3] = new Textos(FC, TxM[3]);//letra comun, tamaño pequeño
+  Boton [] bo = new Boton [3]; 
+  Texto [] txt = new Texto [4];
+  Enemigo [] enemi = new Enemigo [3];
+  Enemigo [] enemi2 = new Enemigo[3];
+  Vidas [] Life = new Vidas [3];
+  Fondo Space;
+  Fondo Hist;
+  Personaje puppycat;
+  RashoLaser Rz;
+  //imagenes
+  PImage [] Img = new PImage [8];
+  //**********************************************************CONSTRUCTOR
+  Juego() {
+    //Pantalla y fuentes
+    pantalla = 0;
+    puntos = 0;
+    IndT = 0;
+    TI = 0;
+    azul = color(111, 133, 216);
+    C = loadFont("comun.vlw");
+    T = createFont("titulo.ttf", height/9); 
+    //IMAGENES
+    Img[0] = loadImage("espacio1.png");//fondo
+    Img[0].resize(width*2, height);
+    Img[1] = loadImage("ene.jpg");//enemigo 1
+    Img[2] = loadImage("perso.jpeg"); //personaje
+    Img[2].resize(height/4, height/4); 
+    Img[3] = loadImage("cat.jpg"); //enemigo 2
+    Img[4] = loadImage("Star.png"); //bala
+    Img[4].resize(height/12, height/12);
+    Img[5] = loadImage("vivo.png");//vidas
+    Img[5].resize(height/12, height/12);
+    Img[6] = loadImage("nuerto.png");//vidas
+    Img[6].resize(height/12, height/12);
+    Img[7] = loadImage("hts.png");
+    Img[7].resize(width*2, height);
+    Space = new Fondo(Img[0]);
+    Hist = new Fondo(Img[7]);
+    //POSICIÓN X
+    PX[0] = width/2;
+    PX[1] = width;
+    PX[2] = 0;
+    // POSICIÓN Y 
+    PY[0] = height/2;
+    PY[1] = height;
+    PY[2] = 0;
+    //TAMAÑO
+    TM[0] = height/15; 
+    TM[1] = height/25;  
+    TM[2] = height/9;
+    TM[3] = height/30;
+    //BOTONES
+    bo[0] = new Boton(C, TM[0], 0, LEFT);//grande
+    bo[1] = new Boton(C, TM[1], 0, LEFT);//pequeño
+    //TEXTOS
+    txt [0] = new Texto(T, TM[2], azul, CENTER);//titulo grande (revisar si se puede cambiar por un 8
+    txt [1] = new Texto(C, TM[1], 255, CENTER);//letra grande
+    txt [2] = new Texto(T, TM[0], 255, CENTER);//titulo pequeño
+    txt [3] = new Texto(C, TM[3], 255, LEFT);//letra pequeña
+    //ENEMIGOS
+    for (int i = 0; i < enemi.length; i++) {
+      enemi[i] = new Enemigo(Img[1], width/2, height/8);
+    }
+    for (int i = 0; i < enemi2.length; i++) {
+      enemi2[i] = new Enemigo(Img[3], width/2, height/8);
+    }
+    //PERSONAJE
+    puppycat = new Personaje(Img[2], height/8);
+    Rz = new RashoLaser (Img [4], puppycat.px, puppycat.py);
+    //VIDAS
+    for (int i = 0; i < Life.length; i++) {
+      Life[i] = new Vidas(Img[5], Img[6], width/12 + width/10*i, height/15);
+    }
   }
-
-  void dibujo() {
-    //inicio
-    if (estado == 0) {
-      background(0);
-      txt[0].txt("Gato Espacial!", 255, X[0], Y[0] - TxM[2]);
-      BO[0].DB(X[0], Y[0] + alto, ancho, alto, "Iniciar");
+  //**********************************************************************DIBUJO
+  void Dib() {
+    //------------------------------------- Inicio 
+    if (pantalla == 0) {
+      Space.DF();
+      txt[0].txt("¡Gato Espacial!", PX[0], PY[0] - TM[2]);
+      bo[0].DB( PX[0]-width/8, PY[0], width/4, height/8, "iniciar");
+      bo[0].DB( PX[0]-width/3, PY[0] + height/5, width/4, height/8, "reglas");
+      bo[0].DB( PX[1]- PX[0], PY[0] + height/5, width/3, height/8, " créditos");
     }
-    //historia
-    if (estado == 1) {
-      background (200);
-      txt[2].txt("< back", 255, X[1], Y[1]);
-      BO[1].DB(X[2] - width/8, Y[2] - height/10, width/8, height/10, "saltar");
-      if (Seg <= 59) {
-        delay(100); 
-        Seg = Seg + 1;
-      } //aqui se va a mostrar una 
-      else {   
-        Min = Min + 1;  
-        Seg = 0;
-      }         //caricatura en plan  mini historia
-      if (Min == 1 && Seg == 0) {  
-        estado = 2;
-      }   //por eso el reloj, para dar tiempo de lectura :)
+    //--------------------------------------------- Mini Historia
+    if (pantalla == 1) {
+      Hist.DC();
+      txt[2].txt("  < back", PX[2] + TM[2], PY[2] + TM[0]);
+      txt[2].txt("saltar", PX[1] - height/7, PY[2] + TM[0]);
+      Tiempo(1000);
     }
-    //intrucciones
-    if (estado == 2) {
-      background(0);
-      txt[0].txt("Intrucciones!", 255, X[0], Y[0] - height/3);
-      txt[1].txt("yadud on es qeu tosye dacione, bueno, tienes que esquivar a los\n oponentes y evitar morir se supone que va a tener contador\n de vidas pero primero fijemonos que funcione ", 255, X[0], Y[0] - height/5);
-      imageMode(CENTER); //sera otra foto despues
-      image(si,X[0] + width/5, Y[0] + height/6, ancho + width/5, alto + height/4);
-      txt[3].txtL("Más texto introductivo de\n como tiene que jugar esto\n que estoy haciendo, texto txt\n text textotext tx mastexto th\n sjdfksosme s textocosas y\n scomojugar cosastxt txt es\n mas relleno para ver como\n queda el formato textual.\n vamos a ver como se mejora\n XD", 255, X[1], Y[2] - height/2);
-      txt[2].txt("Ok!", 255, X[2] - width/9, Y[2] - height/20);
+    //---------------------------------------------- Reglas
+    if (pantalla == 2) {
+      background(255);
     }
-    
-    if(estado == 3){background(255);
-    int cant = 5;
-    for(int i = 0; i<cant; i++){
-    ene[i].DE();
-    ene[i].ME();}
-   }
-    /*
-    // me ayuda para identificar si estoy dentro de un boton 
-     
-     if (mouseX>X[2] - width/6  && mouseX< X[2] - ancho/4 && mouseY>Y[2] - height/10  && mouseY<Y[2] - height/20) {
-     println("estoy dentro");
-     } else {
-     println("aqui no");
-     }*/
+    //---------------------------------------------- Juego
+    if (pantalla == 3) {
+      println(puntos);
+      Space.DF();
+      for (int i = 0; i< enemi.length; i++) {
+        enemi[i].DE();
+      }//dib Ene
+      txt[2].txt("Puntos  "+puntos, PX[1] - height/4, PY[2] + TM[0]);
+      puppycat.DP();
+      Rz.DRz();
+      Rz.MRz(puppycat.py); //ubicacion del rayo en el personaje
+      for (int i = 0; i< enemi2.length; i++) {
+        enemi2[i].DE();
+      }
+      Rayo();
+      for (int i = 0; i< Life.length; i++) {
+        Life[i].DV();
+      }
+      Choque();
+      if (Life[0].vivo ==  false && Life[1].vivo ==  false && Life[2].vivo ==  false) {
+        pantalla = 5;
+      }
+    }
+    //---------------------------------------- GANAR | PERDER
+    if (pantalla == 4) {
+      background(0, 225, 255);
+    }
+    if (pantalla == 5) {
+      background(0, 0, 255);
+    }
   }
-
-  void interactivo() {
-    //boton Pantalla inicio
-    if (estado == 0) {
-      if (mouseX>X[0]-ancho/2 && mouseX<X[0]+ancho/2 && mouseY>Y[0]+alto/2 && mouseY<Y[0]+alto+alto/2) {
-        estado = 1;}
-      }
-      
-      //Botones pantalla historia
-      if (estado == 1) {
-        if (mouseX>X[1] - ancho/2 && mouseX< X[1] + ancho/3 && mouseY>Y[1] - alto/2 && mouseY<Y[1] + alto/4) {
-          estado = 0;
-        }
-        if (mouseX>X[2] - width/5  && mouseX< X[2] - ancho/4 && mouseY>Y[2] - height/6  && mouseY<Y[2] - height/20) {
-          estado = 2; //hay que revisar porque hay veces en las que el boton saltar, reconoce el boton ok y en vez de ir a creditos va a juego
-        }
-      }
-      //boton creditos
-      if(estado == 2){
-      if (mouseX>X[2] - width/6  && mouseX< X[2] - ancho/4 && mouseY>Y[2] - height/10  && mouseY<Y[2] - height/20) {
-        estado = 3;
+  //************************************************************ Mov Pers y kill enemis
+  void MovP(int tecla) {
+    puppycat.MP(tecla);
+    if (tecla == LEFT) { //disparar rayo
+      Rz.KL();
+    }
+  }
+  void Rayo() { //cuando el rayo impacta
+    for (int i=0; i< enemi.length; i++) {
+      float Ds = dist(Rz.px, Rz.py, enemi[i].px, enemi[i].py);
+      if (Ds < enemi[i].tam/2 + Rz.tam/2) {
+        Rz.Toca = false;
+        enemi[i].KL();
+        puntos++; 
+        if (puntos == 20) {
+          pantalla = 4;
         }
       }
+    }
+  }
+  void Choque() { //cuando el personaje choca
+    for (int i = 0; i< enemi2.length; i++) {
+      float Ds = dist(puppycat.px, puppycat.py, enemi2[i].px, enemi2[i].py);
+      if (Ds < enemi2[i].tam/2 + puppycat.tamm/2) {
+        puppycat.choca = false;
+        enemi2[i].KL();
+        background(255, 0, 0);
+        Life[i].vivo = false; //3 vidas y enemigos (si el enemi se reinicia la vida también)
+      }
+    }
+  }
+  void Tiempo(float TE) {
+    if (millis() >= TI + TE) {
+      IndT ++;
+    }
+    if (IndT == 900) { 
+      pantalla = 2;
+    }
+  }
+  //******************************************************** Interacción para botones
+  void Inter() {
+    pantalla ++;
   }
 }
