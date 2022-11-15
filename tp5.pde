@@ -1,8 +1,5 @@
-Juego GatoEspacial;
-
 void setup() {
   size(600, 500);
-  background(0);
   GatoEspacial = new Juego();
 }
 
