@@ -1,0 +1,275 @@
+class Juego {
+  //...........................................otros
+  int pantalla, puntos, IndT;
+  long TI;
+  PFont T, C;
+  color azul;
+  //...........................................medidas
+  float [] PX = new float [3];
+  float [] PY = new float [3];
+  float [] TM = new float [4];
+  //............................................objetos
+  Texto [] txt = new Texto [5];
+  Enemigo [] enemi = new Enemigo [3];
+  Enemigo [] enemi2 = new Enemigo[3];
+  Vidas [] Life = new Vidas [3];
+  Boton bo; 
+  Fondo Space;
+  Fondo Hist;
+  Personaje puppycat;
+  RashoLaser Rz;
+  //............................................imagenes
+  PImage [] Img = new PImage [8];
+  //********************************************************** CONSTRUCTOR
+  Juego() {
+    //........................................Pantalla, fuentes y otros
+    pantalla = 0;
+    puntos = 0;
+    IndT = 0;
+    TI = 0;
+    azul = color(111, 133, 216);
+    C = loadFont("comun.vlw");
+    T = createFont("titulo.ttf", height/9); 
+    //.........................................................IMAGENES
+    Img[0] = loadImage("espacio1.png");//fondo
+    Img[0].resize(width*2, height);
+    Img[1] = loadImage("ene.jpg");//enemigo 1
+    Img[2] = loadImage("perso.jpeg"); //personaje
+    Img[2].resize(height/4, height/4); 
+    Img[3] = loadImage("cat.jpg"); //enemigo 2
+    Img[4] = loadImage("Star.png"); //bala
+    Img[4].resize(height/12, height/12);
+    Img[5] = loadImage("vivo.png");//vidas
+    Img[5].resize(height/12, height/12);
+    Img[6] = loadImage("nuerto.png");//vidas
+    Img[6].resize(height/12, height/12);
+    Img[7] = loadImage("hts.png");
+    Img[7].resize(width*2, height);
+    Space = new Fondo(Img[0]);
+    Hist = new Fondo(Img[7]);
+    //...........................................POSICIÓN X
+    PX[0] = width/2;
+    PX[1] = width;
+    PX[2] = 0;
+    //...........................................POSICIÓN Y 
+    PY[0] = height/2;
+    PY[1] = height;
+    PY[2] = 0;
+    //...........................................TAMAÑO
+    TM[0] = height/15; 
+    TM[1] = height/25;  
+    TM[2] = height/9;
+    TM[3] = height/30;
+    //.............................................TEXTOS y boton
+
+    txt [0] = new Texto(T, TM[2], azul, CENTER);//titulo grande
+    txt [1] = new Texto(C, TM[1], 255, CENTER);//letra grande
+    txt [2] = new Texto(T, TM[0], 255, CENTER);//titulo pequeño
+    txt [3] = new Texto(C, TM[3], 255, LEFT);//letra pequeña
+    txt [4] = new Texto(T, TM[0], azul, CENTER);//titulo pequeño
+    bo = new Boton(C, TM[0], 0, LEFT);
+
+    //...........................................................ENEMIGOS
+    for (int i = 0; i < enemi.length; i++) {
+      enemi[i] = new Enemigo(Img[1], width/2, height/8);
+    }
+    for (int i = 0; i < enemi2.length; i++) {
+      enemi2[i] = new Enemigo(Img[3], width/2, height/8);
+    }
+    //...........................................................PERSONAJE
+    puppycat = new Personaje(Img[2], height/8);
+    Rz = new RashoLaser (Img [4], puppycat.px, puppycat.py);
+    //...........................................................VIDAS
+    for (int i = 0; i < Life.length; i++) {
+      Life[i] = new Vidas(Img[5], Img[6], width/12 + width/10*i, height/15);
+    }
+  }
+  //******************************************************************* DIBUJO
+  void Dib() {
+    Reinicio();
+    //............................................................ Inicio 
+    if (pantalla == 0) {
+      Space.DF();
+      txt[0].txt("¡Gato Espacial!", PX[0], PY[0] - TM[2]);
+      bo.DB( PX[0]-width/8, PY[0], width/4, height/8, "iniciar");
+      bo.DB( PX[0]-width/3, PY[0] + height/5, width/4, height/8, "reglas");
+      bo.DB( PX[1]- PX[0], PY[0] + height/5, width/3, height/8, " créditos");
+    }
+    //........................................................... Mini Historia
+    if (pantalla == 1) {
+      Hist.DC();
+      txt[2].txt("  < back", PX[2] + TM[2], PY[2] + TM[0]);
+      txt[2].txt("saltar", PX[1] - height/7, PY[2] + TM[0]);
+      Tiempo(1000);
+    }
+    //.............................................................. Reglas
+    if (pantalla == 2) {
+      Space.DF();
+      txt[0].txt("Intrucciones!", PX[0], PY[0] - height/3);
+      txt[1].txt("¡Hola! ¡Bienvenido a la tripulación estelar!\n Tu misión es salvar al planeta de la lluvia espacial\n destrulle 20 meteoritos y evita chocar contra los satelites! ", PX[0], PY[0] - height/5);
+      txt[0].Img(Img[3], PX[0] + width/5, PY[0] + height/6, width/4 + width/5, height/8 + height/4);
+      txt[3].txt("Para moverte por el espacio\nusa las flechas arriba y abajo,\npara destruir los meteoritos\npulsa la flecha izquierda. ¡UH!\n¡casi lo olvido! tienes 3 vidas\npero por cada satelite que\nesquives puedes extenderlas\n\n¡MUCHA SUERTE PUPPYCAT!", width/9, PY[1] - height/2);
+      txt[2].txt("Ok!", PX[1] - width/9, PY[1] - height/20);
+      txt[2].txt("  < back", PX[2] + TM[2], PY[1] - height/20);
+    }
+    //............................................................... Juego
+    if (pantalla == 3) {
+      println(puntos);
+      Space.DF();
+      for (int i = 0; i< enemi.length; i++) {
+        enemi[i].DE();
+      }//dib Ene
+      txt[2].txt("Puntos  "+puntos, PX[1] - height/4, PY[2] + TM[0]);
+      puppycat.DP();
+      Rz.DRz();
+      Rz.MRz(puppycat.py); //ubicacion del rayo en el personaje
+      for (int i = 0; i< enemi2.length; i++) {
+        enemi2[i].DE();
+      }
+      Rayo();
+      for (int i = 0; i< Life.length; i++) {
+        Life[i].DV();
+      }
+      Choque();
+      if (Life[0].vivo ==  false && Life[1].vivo ==  false && Life[2].vivo ==  false) {
+        pantalla = 5;
+      }
+    }
+    //...................................................... GANAR | PERDER
+    if (pantalla == 4) {
+      Space.DF();
+      txt[0].txt("¡NOS HAS SALVADO!", PX[0], PY[0] - height/4);
+      txt[4].txt("estamos agradecidos", PX[0], PY[0] - height/6);
+      bo.DB( PX[0]-width/4, PY[0], width/2, height/8, "  volver a jugar");
+      bo.DB( PX[0]-width/3, PY[0] + height/5, width/4, height/8, "inicio");
+      bo.DB( PX[1]- PX[0], PY[0] + height/5, width/3, height/8, " créditos");
+    }
+    if (pantalla == 5) {
+      Space.DF();
+      txt[0].txt("AY NO, CHOCASTE!", PX[0], PY[0] - height/4);
+      txt[4].txt("y perdiste todas tus vidas :(", PX[0], PY[0] - height/6);
+      bo.DB( PX[0]-width/4, PY[0], width/2, height/8, "  volver a jugar");
+      bo.DB( PX[0]-width/3, PY[0] + height/5, width/4, height/8, "inicio");
+      bo.DB( PX[1]- PX[0], PY[0] + height/5, width/3, height/8, " créditos");
+    }
+    //....................................................... CREDITOS
+    if (pantalla == 6) {
+      Space.DF();
+      txt[2].txt("Tecnología Multimedial I", PX[0], PY[2] + TM[2]);
+      txt[1].txt("Profesor: José Luis Bugiolachi\n \nAlumna: Kristyn Hernández\n\nLegajo: 91416/3\n\nArtista visual: @Kriwi_z (instagram)\n\nProtagonista: PuppyCat\n\nMúsica: nosequewebada - Mr.Kitty\n\n\n¡GRACIAS POR JUGAR!\n<3", PX[0], PY[0] - height/4);
+      txt[2].txt("  < back", PX[2] + TM[2], PY[1] - height/20);
+    }
+  }
+  //******************************************************* Personaje y Enemigos
+
+  void MovP(int tecla) {//............................ movimiento personaje
+    puppycat.MP(tecla);
+    if (tecla == LEFT) { //disparar rayo
+      Rz.KL();
+    }
+  }
+  //........................................................... Rayo brillitos
+  void Rayo() { //cuando el rayo impacta
+    for (int i=0; i< enemi.length; i++) {
+      float Ds = dist(Rz.px, Rz.py, enemi[i].px, enemi[i].py);
+      if (Ds < enemi[i].tam/2 + Rz.tam/2) {
+        Rz.Toca = false;
+        enemi[i].KL();
+        puntos++; 
+        if (puntos == 20) {
+          pantalla = 4;
+        }
+      }
+    }
+  }
+  //................................................................ Choque
+  void Choque() { //cuando el personaje choca
+    for (int i = 0; i< enemi2.length; i++) {
+      float Ds = dist(puppycat.px, puppycat.py, enemi2[i].px, enemi2[i].py);
+      if (Ds < enemi2[i].tam/2 + puppycat.tamm/2) {
+        puppycat.choca = false;
+        enemi2[i].KL();
+        background(255, 0, 0);
+        Life[i].vivo = false; //si el enemi se reinicia la vida también
+      }
+    }
+  }
+  //************************************************************ Tiempo y Reinicio
+  void Tiempo(float TE) {
+    if (millis() >= TI + TE) {
+      IndT ++;
+    }
+    if (IndT == 900) { 
+      pantalla = 2;
+    }
+  }
+  //................................................................ Reinicio
+  void Reinicio() {
+    if (pantalla == 0 || pantalla == 4 ||  pantalla == 5) {
+      for (int i = 0; i < 3; i ++) {
+        Life[i].vivo = true; 
+        Rz.Toca = false;
+        enemi2[i].XE = false;
+        enemi[i].XE = false;
+      }
+      puppycat.choca = false;
+      Hist.Op = 0;
+      Hist.PX = - width;
+      puntos = 0;
+      IndT = 0;
+      TI = 0;
+    }
+  }
+  //************************************************** Interacción para botones
+
+  void Inter() {//......................................inicio
+    if (pantalla == 0) {
+      if (mouseX>PX[0]-width/8  && mouseX< PX[0] - width/8 + width/4 && mouseY> PY[0] && mouseY<PY[0] + height/8) {
+        pantalla = 1; //historia
+      }
+      if (mouseX>PX[0]-width/3  && mouseX< PX[0]-width/3 + width/4 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
+        pantalla = 2;//instrucciones
+      }
+      if (mouseX>PX[1]- PX[0]  && mouseX< PX[1]- PX[0] + width/3 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
+        pantalla = 6;//creditos
+      }
+    }
+    //............................................................. historia
+    if (pantalla == 1) {
+      if (mouseX > PX[2] && mouseX < PX[2] + TM[2] + width/9 && mouseY > PY[2] && mouseY < PY[2] + TM[0]) {
+        pantalla = 0;
+      }
+      if (mouseX > PX[1] - width/5 && mouseX < PX[1] && mouseY >  PY[2] && mouseY < PY[2] + TM[0]) {
+        pantalla = 2;
+      }
+    }
+    //............................................................ instrucciones
+    if (pantalla == 2) {
+      if (mouseX > PX[2] && mouseX < PX[2] + width/5 && mouseY > PY[1] - height/8 && mouseY < PY[1] - height/17) {
+        pantalla = 0;//inicio
+      }
+      if (mouseX > PX[1] - width/6 && mouseX < PX[1] - TM[0] && mouseY > PY[1] - TM[2] && mouseY < PY[1] - TM[1]) {
+        pantalla = 3;//juego
+      }
+    }
+    //............................................................ ganar y perder
+    if (pantalla == 4 || pantalla == 5) {
+      if (mouseX > PX[0] - width/4 && mouseX < PX[0] - width/4 +  width/2 && mouseY > PY[0] && mouseY < PY[0] + height/8) {
+        pantalla = 3;//juego
+      }
+      if (mouseX>PX[0]-width/3  && mouseX< PX[0]-width/3 + width/4 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
+        pantalla = 0;//inicio
+      }
+      if (mouseX>PX[1]- PX[0]  && mouseX< PX[1]- PX[0] + width/3 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
+        pantalla = 6;//creditos
+      }
+    }
+    //................................................................ creditos
+    if (pantalla == 6 || pantalla == 3) { // creditos
+      if (mouseX > PX[2] && mouseX < PX[2] + width/5 && mouseY > PY[1] - height/8 && mouseY < PY[1] - height/17) {
+        pantalla = 0;//inicio
+      }
+    }
+  }
+}
+
