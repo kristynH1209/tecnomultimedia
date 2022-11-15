@@ -1,3 +1,4 @@
+Juego GatoEspacial;
 void setup() {
   size(600, 500);
   GatoEspacial = new Juego();
