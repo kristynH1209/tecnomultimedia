@@ -3,7 +3,6 @@ class Juego {
   int pantalla, puntos, IndT;
   long TI;
   PFont T, C;
-  color azul;
   //...........................................medidas
   float [] PX = new float [3];
   float [] PY = new float [3];
@@ -13,40 +12,51 @@ class Juego {
   Enemigo [] enemi = new Enemigo [3];
   Enemigo [] enemi2 = new Enemigo[3];
   Vidas [] Life = new Vidas [3];
+  Fondo [] fondo = new Fondo [3];
+  Boton [] Motto = new Boton [14];
   Boton bo; 
-  Fondo Space;
   Fondo Hist;
   Personaje puppycat;
   RashoLaser Rz;
   //............................................imagenes
-  PImage [] Img = new PImage [8];
-  //********************************************************** CONSTRUCTOR
+  PImage [] Img = new PImage [13];
+  //******************************************************************** CONSTRUCTOR
   Juego() {
     //........................................Pantalla, fuentes y otros
     pantalla = 0;
     puntos = 0;
     IndT = 0;
     TI = 0;
-    azul = color(111, 133, 216);
     C = loadFont("comun.vlw");
     T = createFont("titulo.ttf", height/9); 
     //.........................................................IMAGENES
-    Img[0] = loadImage("espacio1.png");//fondo
+    Img[0] = loadImage("espacio1.png");
     Img[0].resize(width*2, height);
-    Img[1] = loadImage("ene.jpg");//enemigo 1
-    Img[2] = loadImage("perso.jpeg"); //personaje
-    Img[2].resize(height/4, height/4); 
-    Img[3] = loadImage("cat.jpg"); //enemigo 2
-    Img[4] = loadImage("Star.png"); //bala
-    Img[4].resize(height/12, height/12);
-    Img[5] = loadImage("vivo.png");//vidas
-    Img[5].resize(height/12, height/12);
-    Img[6] = loadImage("nuerto.png");//vidas
+    Img[1] = loadImage("Space2.png");
+    Img[1].resize(width*2, height);
+    Img[2] = loadImage("hts.png");
+    Img[2].resize(width*2, height);
+    Img[3] = loadImage("meteorito.png");
+    Img[4] = loadImage("satelite.png");
+    Img[4].resize(height/4, height/4); 
+    Img[5] = loadImage("perso.png");
+    Img[5].resize(height/4, height/4); 
+    Img[6] = loadImage("estrella.png");
     Img[6].resize(height/12, height/12);
-    Img[7] = loadImage("hts.png");
-    Img[7].resize(width*2, height);
-    Space = new Fondo(Img[0]);
-    Hist = new Fondo(Img[7]);
+    Img[7] = loadImage("vivo.png");
+    Img[7].resize(height/12, height/12);
+    Img[8] = loadImage("muerto.png");
+    Img[8].resize(height/12, height/12);
+    Img[9] = loadImage("ganaste.png");
+    Img[9].resize(width*2, height);
+    Img[10] = loadImage("inicio.png");
+    Img[10].resize(width*2, height);
+    Img[11] = loadImage("perdiste.png");
+    Img[11].resize(width*2, height);
+    Img[12] = loadImage("ejemplo.png");
+    for (int i = 0; i< fondo.length; i++) {//fondos
+      fondo[i] = new Fondo(Img[i]);
+    }
     //...........................................POSICIÓN X
     PX[0] = width/2;
     PX[1] = width;
@@ -60,62 +70,86 @@ class Juego {
     TM[1] = height/25;  
     TM[2] = height/9;
     TM[3] = height/30;
-    //.............................................TEXTOS y boton
-
-    txt [0] = new Texto(T, TM[2], azul, CENTER);//titulo grande
-    txt [1] = new Texto(C, TM[1], 255, CENTER);//letra grande
-    txt [2] = new Texto(T, TM[0], 255, CENTER);//titulo pequeño
-    txt [3] = new Texto(C, TM[3], 255, LEFT);//letra pequeña
-    txt [4] = new Texto(T, TM[0], azul, CENTER);//titulo pequeño
-    bo = new Boton(C, TM[0], 0, LEFT);
+    //.............................................TEXTOS 
+    txt [0] = new Texto(T, TM[2], #FFE0F4, CENTER);
+    txt [1] = new Texto(C, TM[1], 255, CENTER);
+    txt [2] = new Texto(T, TM[0], 255, CENTER);
+    txt [3] = new Texto(C, TM[3], 255, LEFT);
+    txt [4] = new Texto(T, TM[0], #FFE0F4, CENTER);
+    //............................................................ BOTONES
+    //inicio
+    Motto[0] = new Boton (C, PX[0]-width/8, PY[0], width/4, height/8);
+    Motto[1] = new Boton (C, PX[0]-width/3, PY[0] + height/5, width/4, height/8);
+    Motto[2] = new Boton (C, PX[1]- PX[0], PY[0] + height/5, width/3, height/8);
+    //ganar
+    Motto[3] = new Boton (C, PX[0]-width/4, PY[0], width/2, height/8);
+    Motto[4] = new Boton (C, PX[0]-width/3, PY[0] + height/5, width/4, height/8);
+    Motto[5] = new Boton (C, PX[1]- PX[0], PY[0] + height/5, width/3, height/8);
+    //perder
+    Motto[6] = new Boton (C, PX[0]-width/4, PY[0], width/2, height/8);
+    Motto[7] = new Boton (C, PX[0]-width/3, PY[0] + height/5, width/4, height/8);
+    Motto[8] = new Boton (C, PX[1]- PX[0], PY[0] + height/5, width/3, height/8);
+    //creditos 
+    Motto[9] = new Boton (T, PX[0]-width/2, PY[0] + height/2.6, width/5, height/11);
+    //Historia
+    Motto[10] = new Boton (T, PX[1]-width/5, PY[2], width/6, TM[0]);
+    Motto[11] = new Boton (T, PX[0]-width/2, PY[2], width/5, TM[0]);
+    //Instrucciones
+    Motto[12] = new Boton (T, PX[0]-width/2, PY[0] + height/2.6, width/5, height/11);
+    Motto[13] = new Boton (T, PX[1]-width/6, PY[0] + height/2.6, width/10, height/11);
 
     //...........................................................ENEMIGOS
     for (int i = 0; i < enemi.length; i++) {
-      enemi[i] = new Enemigo(Img[1], width/2, height/8);
+      enemi[i] = new Enemigo(Img[3], width/2, height/8);
     }
     for (int i = 0; i < enemi2.length; i++) {
-      enemi2[i] = new Enemigo(Img[3], width/2, height/8);
+      enemi2[i] = new Enemigo(Img[4], width/2, height/8);
     }
     //...........................................................PERSONAJE
-    puppycat = new Personaje(Img[2], height/8);
-    Rz = new RashoLaser (Img [4], puppycat.px, puppycat.py);
+    puppycat = new Personaje(Img[5], height/8);
+    Rz = new RashoLaser (Img [6], puppycat.px, puppycat.py);
     //...........................................................VIDAS
     for (int i = 0; i < Life.length; i++) {
-      Life[i] = new Vidas(Img[5], Img[6], width/12 + width/10*i, height/15);
+      Life[i] = new Vidas(Img[7], Img[8], width/12 + width/10*i, height/15);
     }
   }
-  //******************************************************************* DIBUJO
+  //************************************************************************* DIBUJO
   void Dib() {
     Reinicio();
     //............................................................ Inicio 
     if (pantalla == 0) {
-      Space.DF();
-      txt[0].txt("¡Gato Espacial!", PX[0], PY[0] - TM[2]);
-      bo.DB( PX[0]-width/8, PY[0], width/4, height/8, "iniciar");
-      bo.DB( PX[0]-width/3, PY[0] + height/5, width/4, height/8, "reglas");
-      bo.DB( PX[1]- PX[0], PY[0] + height/5, width/3, height/8, " créditos");
+      fondo[0].DF();
+      txt[0].txt("¡Gato Espacial!", PX[0], PY[0] - height/3);
+      txt[0].Img(Img[10], PX[0], PY[0] - TM[2], width/3, height/2);
+      Motto[0].DB(0, 1, "iniciar");
+      Motto[1].DB(0, 2, "reglas");
+      Motto[2].DB(0, 6, " créditos");
     }
     //........................................................... Mini Historia
     if (pantalla == 1) {
-      Hist.DC();
+      fondo[2].DC();
+      Motto[10].BI(1, 0);
+      Motto[11].BI(1, 2);
       txt[2].txt("  < back", PX[2] + TM[2], PY[2] + TM[0]);
       txt[2].txt("saltar", PX[1] - height/7, PY[2] + TM[0]);
       Tiempo(1000);
     }
     //.............................................................. Reglas
     if (pantalla == 2) {
-      Space.DF();
+      fondo[1].DF();
       txt[0].txt("Intrucciones!", PX[0], PY[0] - height/3);
       txt[1].txt("¡Hola! ¡Bienvenido a la tripulación estelar!\n Tu misión es salvar al planeta de la lluvia espacial\n destrulle 20 meteoritos y evita chocar contra los satelites! ", PX[0], PY[0] - height/5);
-      txt[0].Img(Img[3], PX[0] + width/5, PY[0] + height/6, width/4 + width/5, height/8 + height/4);
-      txt[3].txt("Para moverte por el espacio\nusa las flechas arriba y abajo,\npara destruir los meteoritos\npulsa la flecha izquierda. ¡UH!\n¡casi lo olvido! tienes 3 vidas\npero por cada satelite que\nesquives puedes extenderlas\n\n¡MUCHA SUERTE PUPPYCAT!", width/9, PY[1] - height/2);
+      txt[0].Img(Img[12], PX[0] + width/5, PY[0] + height/6, width/4 + width/5, height/8 + height/4);
+      txt[3].txt("Para moverte por el espacio\nusa las flechas arriba y abajo,\npara destruir los meteoritos\npulsa la flecha izquierda. ¡UH!\n¡casi lo olvido! tienes 3 vidas\npero por cada satelite que\nesquives puedes extenderlas\n\n¡MUCHA SUERTE PUPPYCAT!", width/9, PY[1] - height/2); 
+      Motto[12].BI(2, 0);
+      Motto[13].BI(2, 3);
       txt[2].txt("Ok!", PX[1] - width/9, PY[1] - height/20);
       txt[2].txt("  < back", PX[2] + TM[2], PY[1] - height/20);
     }
     //............................................................... Juego
     if (pantalla == 3) {
       println(puntos);
-      Space.DF();
+      fondo[0].DF();
       for (int i = 0; i< enemi.length; i++) {
         enemi[i].DE();
       }//dib Ene
@@ -137,26 +171,29 @@ class Juego {
     }
     //...................................................... GANAR | PERDER
     if (pantalla == 4) {
-      Space.DF();
-      txt[0].txt("¡NOS HAS SALVADO!", PX[0], PY[0] - height/4);
-      txt[4].txt("estamos agradecidos", PX[0], PY[0] - height/6);
-      bo.DB( PX[0]-width/4, PY[0], width/2, height/8, "  volver a jugar");
-      bo.DB( PX[0]-width/3, PY[0] + height/5, width/4, height/8, "inicio");
-      bo.DB( PX[1]- PX[0], PY[0] + height/5, width/3, height/8, " créditos");
+      fondo[0].DF();
+      txt[0].txt("¡BUEN TRABAJO!", PX[0], PY[0] - height/3);
+      txt[4].txt("salvaste a la tierra", PX[0], PY[0] - height/4);
+      txt[0].Img(Img[9], PX[0], PY[0] - height/7, width/4, height/4);
+      Motto[3].DB(4, 3, "  volver a jugar");
+      Motto[4].DB(4, 0, "inicio");
+      Motto[5].DB(4, 6, " créditos");
     }
     if (pantalla == 5) {
-      Space.DF();
-      txt[0].txt("AY NO, CHOCASTE!", PX[0], PY[0] - height/4);
-      txt[4].txt("y perdiste todas tus vidas :(", PX[0], PY[0] - height/6);
-      bo.DB( PX[0]-width/4, PY[0], width/2, height/8, "  volver a jugar");
-      bo.DB( PX[0]-width/3, PY[0] + height/5, width/4, height/8, "inicio");
-      bo.DB( PX[1]- PX[0], PY[0] + height/5, width/3, height/8, " créditos");
+      fondo[1].DF();
+      txt[0].txt("AY NO, CHOCASTE!", PX[0], PY[0] - height/3);
+      txt[4].txt("y perdiste todas tus vidas :(", PX[0], PY[0] - height/4);
+      txt[0].Img(Img[11], PX[0], PY[0] - height/7, width/5, height/4);
+      Motto[6].DB(5, 3, "  volver a jugar");
+      Motto[7].DB(5, 0, "inicio");
+      Motto[8].DB(5, 6, " créditos");
     }
     //....................................................... CREDITOS
     if (pantalla == 6) {
-      Space.DF();
+      fondo[1].DF();
       txt[2].txt("Tecnología Multimedial I", PX[0], PY[2] + TM[2]);
-      txt[1].txt("Profesor: José Luis Bugiolachi\n \nAlumna: Kristyn Hernández\n\nLegajo: 91416/3\n\nArtista visual: @Kriwi_z (instagram)\n\nProtagonista: PuppyCat\n\nMúsica: nosequewebada - Mr.Kitty\n\n\n¡GRACIAS POR JUGAR!\n<3", PX[0], PY[0] - height/4);
+      txt[1].txt("Profesor: José Luis Bugiolachi\n \nAlumna: Kristyn Hernández\n\nLegajo: 91416/3\n\nArtista visual: @Kriwi_z (instagram)\n\nProtagonista: PuppyCat\n\nMúsica: Melting Core - Mr.Kitty\n\n\n¡GRACIAS POR JUGAR!\n<3", PX[0], PY[0] - height/4);
+      Motto[9].BI(6, 0);
       txt[2].txt("  < back", PX[2] + TM[2], PY[1] - height/20);
     }
   }
@@ -168,14 +205,15 @@ class Juego {
       Rz.KL();
     }
   }
-  //........................................................... Rayo brillitos
+  //........................................................... brillitos
   void Rayo() { //cuando el rayo impacta
     for (int i=0; i< enemi.length; i++) {
       float Ds = dist(Rz.px, Rz.py, enemi[i].px, enemi[i].py);
       if (Ds < enemi[i].tam/2 + Rz.tam/2) {
         Rz.Toca = false;
         enemi[i].KL();
-        puntos++; 
+        puntos++;
+        if(puntos == 5 || puntos == 10 || puntos == 15 || puntos == 20){dsdfjdsfh.play();}
         if (puntos == 20) {
           pantalla = 4;
         }
@@ -191,6 +229,9 @@ class Juego {
         enemi2[i].KL();
         background(255, 0, 0);
         Life[i].vivo = false; //si el enemi se reinicia la vida también
+        if (pantalla == 3) {
+          MyAss.play();
+        }
       }
     }
   }
@@ -213,8 +254,8 @@ class Juego {
         enemi[i].XE = false;
       }
       puppycat.choca = false;
-      Hist.Op = 0;
-      Hist.PX = - width;
+      fondo[2].Op = 0;
+      fondo[2].PX = - width;
       puntos = 0;
       IndT = 0;
       TI = 0;
@@ -222,54 +263,54 @@ class Juego {
   }
   //************************************************** Interacción para botones
 
-  void Inter() {//......................................inicio
-    if (pantalla == 0) {
-      if (mouseX>PX[0]-width/8  && mouseX< PX[0] - width/8 + width/4 && mouseY> PY[0] && mouseY<PY[0] + height/8) {
-        pantalla = 1; //historia
-      }
-      if (mouseX>PX[0]-width/3  && mouseX< PX[0]-width/3 + width/4 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
-        pantalla = 2;//instrucciones
-      }
-      if (mouseX>PX[1]- PX[0]  && mouseX< PX[1]- PX[0] + width/3 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
-        pantalla = 6;//creditos
-      }
+  void Touch() {
+    //inicio
+    if (Motto[0].Press(PX[0]-width/8, PY[0], width/4, height/8) && pantalla == Motto[0].now) {
+      pantalla = Motto[0].after;
     }
-    //............................................................. historia
-    if (pantalla == 1) {
-      if (mouseX > PX[2] && mouseX < PX[2] + TM[2] + width/9 && mouseY > PY[2] && mouseY < PY[2] + TM[0]) {
-        pantalla = 0;
-      }
-      if (mouseX > PX[1] - width/5 && mouseX < PX[1] && mouseY >  PY[2] && mouseY < PY[2] + TM[0]) {
-        pantalla = 2;
-      }
+    if (Motto[1].Press(PX[0]-width/3, PY[0] + height/5, width/4, height/8) && pantalla == Motto[1].now) {
+      pantalla = Motto[1].after;
     }
-    //............................................................ instrucciones
-    if (pantalla == 2) {
-      if (mouseX > PX[2] && mouseX < PX[2] + width/5 && mouseY > PY[1] - height/8 && mouseY < PY[1] - height/17) {
-        pantalla = 0;//inicio
-      }
-      if (mouseX > PX[1] - width/6 && mouseX < PX[1] - TM[0] && mouseY > PY[1] - TM[2] && mouseY < PY[1] - TM[1]) {
-        pantalla = 3;//juego
-      }
+    if (Motto[2].Press(PX[1]- PX[0], PY[0] + height/5, width/3, height/8) && pantalla == Motto[2].now) {
+      pantalla = Motto[2].after;
     }
-    //............................................................ ganar y perder
-    if (pantalla == 4 || pantalla == 5) {
-      if (mouseX > PX[0] - width/4 && mouseX < PX[0] - width/4 +  width/2 && mouseY > PY[0] && mouseY < PY[0] + height/8) {
-        pantalla = 3;//juego
-      }
-      if (mouseX>PX[0]-width/3  && mouseX< PX[0]-width/3 + width/4 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
-        pantalla = 0;//inicio
-      }
-      if (mouseX>PX[1]- PX[0]  && mouseX< PX[1]- PX[0] + width/3 && mouseY> PY[0] + height/5 && mouseY<PY[0] + height/5 + height/8) {
-        pantalla = 6;//creditos
-      }
+    //Ganar
+    if (Motto[3].Press(PX[0]-width/4, PY[0], width/2, height/8) && pantalla == Motto[3].now) {
+      pantalla = Motto[3].after;
     }
-    //................................................................ creditos
-    if (pantalla == 6 || pantalla == 3) { // creditos
-      if (mouseX > PX[2] && mouseX < PX[2] + width/5 && mouseY > PY[1] - height/8 && mouseY < PY[1] - height/17) {
-        pantalla = 0;//inicio
-      }
+    if (Motto[4].Press( PX[0]-width/3, PY[0] + height/5, width/4, height/8) && pantalla == Motto[4].now) {
+      pantalla = Motto[4].after;
+    }
+    if (Motto[5].Press(PX[1]- PX[0], PY[0] + height/5, width/3, height/8) && pantalla == Motto[5].now) {
+      pantalla = Motto[5].after;
+    }
+    //perder
+    if (Motto[6].Press(PX[0]-width/4, PY[0], width/2, height/8) && pantalla == Motto[6].now) {
+      pantalla = Motto[6].after;
+    }
+    if (Motto[7].Press( PX[0]-width/3, PY[0] + height/5, width/4, height/8) && pantalla == Motto[7].now) {
+      pantalla = Motto[7].after;
+    }
+    if (Motto[8].Press(PX[1]- PX[0], PY[0] + height/5, width/3, height/8) && pantalla == Motto[8].now) {
+      pantalla = Motto[8].after;
+    }
+    //creditos 
+    if (Motto[9].Press(PX[0]-width/2, PY[0] + height/2.6, width/4, height/8) && pantalla == Motto[9].now) {
+      pantalla = Motto[9].after;
+    }
+    //Historia PX[1]-width/5, PY[2], width/6, TM[0]
+    if (Motto[10].Press(PX[0]-width/2, PY[2], width/5, TM[0]) && pantalla == Motto[10].now) {
+      pantalla = Motto[10].after;
+    }
+    if (Motto[11].Press(PX[1]-width/5, PY[2], width/6, TM[0]) && pantalla == Motto[11].now) {
+      pantalla = Motto[11].after;
+    }
+    //reglas PX[0]-width/2, PY[0] + height/2.6, width/5, height/11
+    if (Motto[12].Press(PX[0]-width/2, PY[0] + height/2.6, width/5, height/11) && pantalla == Motto[12].now) {
+      pantalla = Motto[12].after;
+    }
+    if (Motto[13].Press(PX[1]-width/6, PY[0] + height/2.6, width/10, height/11) && pantalla == Motto[13].now) {
+      pantalla = Motto[13].after;
     }
   }
 }
-
