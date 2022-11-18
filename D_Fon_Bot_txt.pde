@@ -26,18 +26,35 @@ class Fondo {
 //************************************************************************
 class Boton extends Texto {
   PFont fuente;
-  float px, py, anc, alt;//del void
-  Boton(PFont fuente, float tam, color C, int aling) {//constructor txt
-    super(fuente, tam, C, aling);
-  }
-  void DB(float px, float py, float anc, float alt, String txt) {
+  int now, after;
+  float px, py, anc, alt;
+
+  Boton(PFont fuente, float px, float py, float anc, float alt) {//constructor txt
+    super(fuente, height/15, 255, LEFT);
     this.px = px;
     this.py = py;
     this.anc = anc;
     this.alt = alt;
-    fill(255);
+  }
+  void DB(int now, int after, String txt) {
+    this.now = now;
+    this.after = after;
+    fill(#A162D8);
+    strokeWeight(0);
     rect(px, py, anc, alt, 7);//7 es el redondeado
     txt(txt, px + width/16, py + height/13);
+  }
+  void BI(int now, int after) {//boton invisible
+    this.now = now;
+    this.after = after;
+  }
+  boolean Press (float px, float py, float anc, float alt) {
+    this.px = px;
+    this.py = py;
+    this.anc = anc;
+    this.alt = alt;
+    boolean press = mouseX > px && mouseX < px + anc && mouseY > py && mouseY < py + alt == true;
+    return press;
   }
 }
 //**********************************************************************************
@@ -61,7 +78,7 @@ class Texto {
   }
   void Img(PImage foto, float px, float py, float ancho, float alto) {
     pushStyle();
-    imageMode(CENTER); //sera otra foto despues
+    imageMode(CENTER);
     image(foto, px, py, ancho, alto);
     popStyle();
   }
