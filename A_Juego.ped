@@ -13,7 +13,7 @@ class Juego {
   Enemigo [] enemi2 = new Enemigo[3];
   Vidas [] Life = new Vidas [3];
   Fondo [] fondo = new Fondo [3];
-  Boton [] Motto = new Boton [14]; 
+  Boton [] Motto = new Boton [14];
   Fondo Hist;
   Personaje puppycat;
   RashoLaser Rz;
@@ -212,7 +212,9 @@ class Juego {
         Rz.Toca = false;
         enemi[i].KL();
         puntos++;
-        if(puntos == 5 || puntos == 10 || puntos == 15 || puntos == 20){dsdfjdsfh.play();}
+        if (puntos == 5 || puntos == 10 || puntos == 15 || puntos == 20) {
+          dsdfjdsfh.play();
+        }
         if (puntos == 20) {
           pantalla = 4;
         }
@@ -251,6 +253,8 @@ class Juego {
         Rz.Toca = false;
         enemi2[i].XE = false;
         enemi[i].XE = false;
+        enemi[i].px = 0;
+        enemi2[i].px = 0;
       }
       puppycat.choca = false;
       fondo[2].Op = 0;
