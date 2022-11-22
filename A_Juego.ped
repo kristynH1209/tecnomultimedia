@@ -13,8 +13,7 @@ class Juego {
   Enemigo [] enemi2 = new Enemigo[3];
   Vidas [] Life = new Vidas [3];
   Fondo [] fondo = new Fondo [3];
-  Boton [] Motto = new Boton [14];
-  Boton bo; 
+  Boton [] Motto = new Boton [14]; 
   Fondo Hist;
   Personaje puppycat;
   RashoLaser Rz;
